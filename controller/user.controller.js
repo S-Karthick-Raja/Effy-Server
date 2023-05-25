@@ -1,7 +1,9 @@
 import {
   addUserServices,
+  deleteUserServices,
   getAllUserServices,
   getUniqueUserServices,
+  updateUserServices,
 } from "../services/user.services.js";
 
 // Get All User Controller
@@ -44,7 +46,7 @@ export const getUniqueUserController = async (req, res) => {
 };
 
 // Create User Controller
-export const createUsersController = async (req, res) => {
+export const createUserController = async (req, res) => {
   try {
     const reqData = req.body;
     const resData = await addUserServices(reqData);
@@ -58,6 +60,52 @@ export const createUsersController = async (req, res) => {
     res.status(400).json({
       response: "error",
       message: "Failed to add user",
+      error: error,
+    });
+  }
+};
+
+// Update User Controller
+export const updateUserController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const reqData = req.body;
+
+    const FinalData = {
+      ...reqData,
+      id: id,
+    };
+    const resData = await updateUserServices(FinalData);
+
+    res.status(200).json({
+      response: "success",
+      message: "successfully updated user",
+      data: resData,
+    });
+  } catch (error) {
+    res.status(400).json({
+      response: "error",
+      message: "Failed to update user",
+      error: error,
+    });
+  }
+};
+
+// Delete User Controller
+export const deleteUserController = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const resData = await deleteUserServices(id);
+    res.status(200).json({
+      response: "success",
+      message: "successfully deleted user",
+      data: resData,
+    });
+  } catch (error) {
+    res.status(400).json({
+      response: "error",
+      message: "Failed to delete user",
       error: error,
     });
   }

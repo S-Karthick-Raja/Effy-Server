@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export const getAllUserServices = async () => {
   const allUsers = await prisma.user.findMany();
 
-  if (JSON.stringify(allUsers) === '[]') {
+  if (JSON.stringify(allUsers) === "[]") {
     throw new Error("No users found");
   }
 
@@ -34,6 +34,23 @@ export const addUserServices = async (reqData) => {
     data: {
       ...reqData,
     },
+  });
+  return await resData;
+};
+
+// Update Unique User
+export const updateUserServices = async (reqData) => {
+  const resData = prisma.user.update({
+    where: { id: reqData.id },
+    data: { ...reqData },
+  });
+  return await resData;
+};
+
+// Delete Unique User
+export const deleteUserServices = async (reqData) => {
+  const resData = prisma.user.delete({
+    where: { id: reqData },
   });
   return await resData;
 };
