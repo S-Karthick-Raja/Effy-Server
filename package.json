@@ -8,6 +8,10 @@
     "start:dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "prisma": {
+    "schema": "prisma/schema.prisma",
+    "seed": "node prisma/seeds/seed.js"
+  },
   "author": "Karthick Raja S",
   "license": "MIT",
   "dependencies": {
