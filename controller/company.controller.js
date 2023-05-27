@@ -1,69 +1,55 @@
-import { addCompanyServices, deleteCompanyServices, getAllCompanyDataServices, getUniqueCompanyServices, updateCompanyServices } from "../services/company.services.js";
+import {
+  addCompanyServices,
+  deleteCompanyServices,
+  getAllCompanyDataServices,
+  getUniqueCompanyServices,
+  updateCompanyServices,
+} from "../services/company.services.js";
+import ErrorResponse from "../utils/error.js";
+import SuccessRequest from "../utils/success.js";
 
 // Create Company Controller
 export const createCompanyController = async (req, res) => {
-    try {
-      const reqData = req.body;
-      const resData = await addCompanyServices(reqData);
-  
-      res.status(200).json({
-        response: "success",
-        message: "successfully added company",
-        data: resData,
-      });
-    } catch (error) {
-      res.status(400).json({
-        response: "error",
-        message: "Failed to add company",
-        error: error.message,
-      });
-    }
-  };
-
-  // Update Company Controller
-export const updateCompanyController = async (req, res) => {
   try {
-    const { id } = req.params;
     const reqData = req.body;
+    const resData = await addCompanyServices(reqData);
 
-    const FinalData = {
-      ...reqData,
-      id: id,
-    };
-    const resData = await updateCompanyServices(FinalData);
-
-    res.status(200).json({
-      response: "success",
-      message: "successfully updated company",
-      data: resData,
-    });
+    res.status(201).json(SuccessRequest("Company created", resData));
   } catch (error) {
-    res.status(400).json({
-      response: "error",
-      message: "Failed to update company",
-      error: error.message,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to create company", error.message));
   }
 };
 
+// Update Company Controller
+export const updateCompanyController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { body: reqData } = req;
+    reqData.id = id;
+
+    const resData = await updateCompanyServices(reqData);
+
+    res.status(200).json(SuccessRequest("Company updated", resData));
+  } catch (error) {
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to update company", error.message));
+  }
+};
 
 // Delete Company Controller
 export const deleteCompanyController = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const resData = await deleteCompanyServices(id);
-    res.status(200).json({
-      response: "success",
-      message: "successfully deleted company",
-      data: resData,
-    });
+    await deleteCompanyServices(id);
+    res.status(204).end();
   } catch (error) {
-    res.status(400).json({
-      response: "error",
-      message: "Failed to delete company",
-      error: error.message,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to delete company", error.message));
   }
 };
 
@@ -71,17 +57,15 @@ export const deleteCompanyController = async (req, res) => {
 export const getAllCompanyDataController = async (req, res) => {
   try {
     const findAllCompanyData = await getAllCompanyDataServices();
-    res.status(200).json({
-      response: "success",
-      data: findAllCompanyData,
-      message: "Fetched all company list successfully",
-    });
+    res
+      .status(200)
+      .json(
+        SuccessRequest("Companies retrieved successfully", findAllCompanyData)
+      );
   } catch (error) {
-    res.status(400).json({
-      response: "Error",
-      message: "Failed to fetch company list",
-      error: error.message,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to retrieve companies", error.message));
   }
 };
 
@@ -91,16 +75,14 @@ export const getUniqueCompanyDataController = async (req, res) => {
     const { id } = req.params;
 
     const findUniqueCompanyData = await getUniqueCompanyServices(id);
-    res.status(200).json({
-      response: "success",
-      data: findUniqueCompanyData,
-      message: "Fetched companyData successfully",
-    });
+    res
+      .status(200)
+      .json(
+        SuccessRequest("Company retrieved successfully", findUniqueCompanyData)
+      );
   } catch (error) {
-    res.status(400).json({
-      response: "Error",
-      message: "Failed to fetch companyData",
-      error: error.message,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to retrieve company", error.message));
   }
 };
