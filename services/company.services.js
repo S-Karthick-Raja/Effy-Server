@@ -24,7 +24,6 @@ export const addCompanyServices = async (reqData) => {
 
 // Update Unique Company
 export const updateCompanyServices = async (reqData) => {
-
   const existingCompanyName = await prisma.company.findUnique({
     where: {
       companyName: reqData.companyName,
@@ -40,4 +39,26 @@ export const updateCompanyServices = async (reqData) => {
     data: { ...reqData },
   });
   return await resData;
+};
+
+// Delete Unique Company
+export const deleteCompanyServices = async (reqData) => {
+  const company = await prisma.company.findUnique({
+    where: { id: reqData },
+  });
+
+  if (!company) {
+    throw new Error("Company not found.");
+  }
+
+  // Delete Associate userInCompany Record
+  await prisma.userInCompany.deleteMany({
+    where: { companyId: reqData },
+  });
+
+  const deletedCompany = await prisma.company.delete({
+    where: { id: reqData },
+  });
+
+  return deletedCompany;
 };

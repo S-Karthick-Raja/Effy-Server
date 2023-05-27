@@ -1,4 +1,4 @@
-import { addCompanyServices, updateCompanyServices } from "../services/company.services.js";
+import { addCompanyServices, deleteCompanyServices, updateCompanyServices } from "../services/company.services.js";
 
 // Create Company Controller
 export const createCompanyController = async (req, res) => {
@@ -20,7 +20,7 @@ export const createCompanyController = async (req, res) => {
     }
   };
 
-  // Update User Controller
+  // Update Company Controller
 export const updateCompanyController = async (req, res) => {
   try {
     const { id } = req.params;
@@ -41,6 +41,27 @@ export const updateCompanyController = async (req, res) => {
     res.status(400).json({
       response: "error",
       message: "Failed to update company",
+      error: error.message,
+    });
+  }
+};
+
+
+// Delete Company Controller
+export const deleteCompanyController = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const resData = await deleteCompanyServices(id);
+    res.status(200).json({
+      response: "success",
+      message: "successfully deleted company",
+      data: resData,
+    });
+  } catch (error) {
+    res.status(400).json({
+      response: "error",
+      message: "Failed to delete company",
       error: error.message,
     });
   }
