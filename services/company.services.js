@@ -73,3 +73,19 @@ export const getAllCompanyDataServices = async () => {
 
   return allCompany;
 };
+
+
+// Get Unique Company Services
+export const getUniqueCompanyServices = async (reqData) => {
+  const uniqueCompany = await prisma.company.findUnique({
+    where: {
+      id: reqData,
+    },
+  });
+
+  if (!uniqueCompany) {
+    throw new Error("No company found.");
+  }
+
+  return uniqueCompany;
+};

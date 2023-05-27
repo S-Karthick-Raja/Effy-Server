@@ -1,4 +1,4 @@
-import { addCompanyServices, deleteCompanyServices, getAllCompanyDataServices, updateCompanyServices } from "../services/company.services.js";
+import { addCompanyServices, deleteCompanyServices, getAllCompanyDataServices, getUniqueCompanyServices, updateCompanyServices } from "../services/company.services.js";
 
 // Create Company Controller
 export const createCompanyController = async (req, res) => {
@@ -80,6 +80,26 @@ export const getAllCompanyDataController = async (req, res) => {
     res.status(400).json({
       response: "Error",
       message: "Failed to fetch company list",
+      error: error.message,
+    });
+  }
+};
+
+// Get Unique CompanyData Controller
+export const getUniqueCompanyDataController = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const findUniqueCompanyData = await getUniqueCompanyServices(id);
+    res.status(200).json({
+      response: "success",
+      data: findUniqueCompanyData,
+      message: "Fetched companyData successfully",
+    });
+  } catch (error) {
+    res.status(400).json({
+      response: "Error",
+      message: "Failed to fetch companyData",
       error: error.message,
     });
   }
