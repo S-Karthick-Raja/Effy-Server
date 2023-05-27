@@ -30,6 +30,16 @@ export const getUniqueUserServices = async (reqData) => {
 
 // Create New User
 export const addUserServices = async (reqData) => {
+  const existingEmail = await prisma.user.findUnique({
+    where: {
+      emailId: reqData.emailId,
+    },
+  });
+
+  if (existingEmail) {
+    throw new Error("Email already exists.");
+  }
+
   const resData = prisma.user.create({
     data: {
       ...reqData,
@@ -51,6 +61,43 @@ export const updateUserServices = async (reqData) => {
 export const deleteUserServices = async (reqData) => {
   const resData = prisma.user.delete({
     where: { id: reqData },
+  });
+  return await resData;
+};
+
+//  Add New User To Company Services
+export const addUserToCompanyServices = async (reqData) => {
+  const existingUser = await prisma.userInCompany.findUnique({
+    where: {
+      userId: reqData.userId,
+    },
+  });
+
+  if (existingUser) {
+    throw new Error("User already exists.");
+  }
+
+  const resData = prisma.userInCompany.create({
+    data: {
+      ...reqData,
+    },
+  });
+  return await resData;
+};
+
+// Migrate User To New Company
+export const migrateUserServices = async (reqData) => {
+  const resData = prisma.userInCompany.update({
+    where: { userId: reqData.userId },
+    data: { ...reqData },
+  });
+  return await resData;
+};
+
+// Remove User From Company
+export const removeUserFromCompanyServices = async (reqData) => {
+  const resData = prisma.userInCompany.delete({
+    where: { userId: reqData },
   });
   return await resData;
 };
