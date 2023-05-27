@@ -59,10 +59,23 @@ export const updateUserServices = async (reqData) => {
 
 // Delete Unique User
 export const deleteUserServices = async (reqData) => {
-  const resData = prisma.user.delete({
+  const userData = await prisma.user.findUnique({
     where: { id: reqData },
   });
-  return await resData;
+
+  if (!userData) {
+    throw new Error("User not found.");
+  }
+
+  // Delete Associate userInCompany Record
+  await prisma.userInCompany.deleteMany({
+    where: { userId: reqData },
+  });
+
+  const DeleteUser = prisma.user.delete({
+    where: { id: reqData },
+  });
+  return await DeleteUser;
 };
 
 //  Add New User To Company Services
