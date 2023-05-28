@@ -50,6 +50,22 @@ export const addUserServices = async (reqData) => {
 
 // Update Unique User
 export const updateUserServices = async (reqData) => {
+  const userData = await prisma.user.findUnique({
+    where: { id: reqData.id },
+  });
+
+  const emailExist = await prisma.user.findUnique({
+    where: { emailId: reqData.emailId },
+  });
+
+  if (!userData) {
+    throw new Error("User not found.");
+  }
+
+  if (emailExist) {
+    throw new Error("Email already exist.");
+  }
+
   const resData = prisma.user.update({
     where: { id: reqData.id },
     data: { ...reqData },
@@ -87,7 +103,7 @@ export const addUserToCompanyServices = async (reqData) => {
   });
 
   if (existingUser) {
-    throw new Error("User already exists.");
+    throw new Error("Cannot assign user to multiple company");
   }
 
   const resData = prisma.userInCompany.create({

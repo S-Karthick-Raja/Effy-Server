@@ -30,6 +30,14 @@ export const updateCompanyServices = async (reqData) => {
     },
   });
 
+  const checkCompanyExist = await prisma.company.findUnique({
+    where: { id: reqData.id },
+  });
+
+  if (!checkCompanyExist) {
+    throw new Error("Company not found.");
+  }
+
   if (existingCompanyName) {
     throw new Error("Company already exists.");
   }
@@ -73,7 +81,6 @@ export const getAllCompanyDataServices = async () => {
 
   return allCompany;
 };
-
 
 // Get Unique Company Services
 export const getUniqueCompanyServices = async (reqData) => {
