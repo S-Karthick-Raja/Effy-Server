@@ -73,7 +73,11 @@ export const deleteCompanyServices = async (reqData) => {
 
 // Get All Company Services
 export const getAllCompanyDataServices = async () => {
-  const allCompany = await prisma.company.findMany();
+  const allCompany = await prisma.company.findMany({
+    include:{
+      UserInCompany: true
+    }
+  });
 
   if (JSON.stringify(allCompany) === "[]") {
     throw new Error("No company found");
