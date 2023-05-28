@@ -8,22 +8,20 @@ import {
   removeUserFromCompanyServices,
   updateUserServices,
 } from "../services/user.services.js";
+import ErrorResponse from "../utils/error.js";
+import SuccessRequest from "../utils/success.js";
 
 // Get All User Controller
 export const getAllUsersController = async (req, res) => {
   try {
     const findAllUsersData = await getAllUserServices();
-    res.status(200).json({
-      response: "success",
-      data: findAllUsersData,
-      message: "Fetched all users successfully",
-    });
+    res
+      .status(200)
+      .json(SuccessRequest("Users retrieved successfully", findAllUsersData));
   } catch (error) {
-    res.status(400).json({
-      response: "Error",
-      message: "Failed to fetch users",
-      error: error.message,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to retrive company", error.message));
   }
 };
 
@@ -33,17 +31,13 @@ export const getUniqueUserController = async (req, res) => {
     const { id } = req.params;
 
     const findUniqueUserData = await getUniqueUserServices(id);
-    res.status(200).json({
-      response: "success",
-      data: findUniqueUserData,
-      message: "Fetched user successfully",
-    });
+    res
+      .status(200)
+      .json(SuccessRequest("User retrieved successfully", findUniqueUserData));
   } catch (error) {
-    res.status(400).json({
-      response: "Error",
-      message: "Failed to fetch user",
-      error: error.message,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to retrive user", error.message));
   }
 };
 
@@ -53,17 +47,9 @@ export const createUserController = async (req, res) => {
     const reqData = req.body;
     const resData = await addUserServices(reqData);
 
-    res.status(200).json({
-      response: "success",
-      message: "successfully added user",
-      data: resData,
-    });
+    res.status(201).json(SuccessRequest("User created", resData));
   } catch (error) {
-    res.status(400).json({
-      response: "error",
-      message: "Failed to add user",
-      error: error.message,
-    });
+    res.status(400).json(ErrorResponse("Failed to create user", error.message));
   }
 };
 
@@ -79,17 +65,9 @@ export const updateUserController = async (req, res) => {
     };
     const resData = await updateUserServices(FinalData);
 
-    res.status(200).json({
-      response: "success",
-      message: "successfully updated user",
-      data: resData,
-    });
+    res.status(200).json(SuccessRequest("User updated", resData));
   } catch (error) {
-    res.status(400).json({
-      response: "error",
-      message: "Failed to update user",
-      error: error,
-    });
+    res.status(400).json(ErrorResponse("Failed to update user", error.message));
   }
 };
 
@@ -98,18 +76,10 @@ export const deleteUserController = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const resData = await deleteUserServices(id);
-    res.status(200).json({
-      response: "success",
-      message: "successfully deleted user",
-      data: resData,
-    });
+    await deleteUserServices(id);
+    res.status(204).end();
   } catch (error) {
-    res.status(400).json({
-      response: "error",
-      message: "Failed to delete user",
-      error: error.message,
-    });
+    res.status(400).json(ErrorResponse("Failed to delete user", error.message));
   }
 };
 
@@ -119,20 +89,13 @@ export const addUserToCompanyController = async (req, res) => {
     const reqData = req.body;
     const resData = await addUserToCompanyServices(reqData);
 
-    res.status(200).json({
-      response: "success",
-      message: "successfully added user to company",
-      data: resData,
-    });
+    res.status(201).json(SuccessRequest("User added to company", resData));
   } catch (error) {
-    res.status(400).json({
-      response: "error",
-      message: "Failed to add user to company",
-      error: error.message,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to add user to company", error.message));
   }
 };
-
 
 // Migrate User Controller
 export const migrateUserController = async (req, res) => {
@@ -146,17 +109,11 @@ export const migrateUserController = async (req, res) => {
     };
     const resData = await migrateUserServices(FinalData);
 
-    res.status(200).json({
-      response: "success",
-      message: "successfully migrated user",
-      data: resData,
-    });
+    res.status(200).json(SuccessRequest("User migrated", resData));
   } catch (error) {
-    res.status(400).json({
-      response: "error",
-      message: "Failed to migrate user",
-      error: error,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to migrate user", error.message));
   }
 };
 
@@ -165,17 +122,11 @@ export const removeUserFromCompanyController = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const resData = await removeUserFromCompanyServices(id);
-    res.status(200).json({
-      response: "success",
-      message: "successfully removed user",
-      data: resData,
-    });
+    await removeUserFromCompanyServices(id);
+    res.status(204).end();
   } catch (error) {
-    res.status(400).json({
-      response: "error",
-      message: "Failed to remove user",
-      error: error,
-    });
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to remove user from company", error.message));
   }
 };
