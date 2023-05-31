@@ -92,6 +92,14 @@ export const getUniqueCompanyServices = async (reqData) => {
     where: {
       id: reqData,
     },
+    include:{
+      UserInCompany:{
+        include: {
+          user: true,
+          company: true
+        }
+      }
+    }
   });
 
   if (!uniqueCompany) {
