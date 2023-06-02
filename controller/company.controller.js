@@ -2,6 +2,7 @@ import {
   addCompanyServices,
   deleteCompanyServices,
   getAllCompanyDataServices,
+  getAllUserFromCompanyServices,
   getUniqueCompanyServices,
   updateCompanyServices,
 } from "../services/company.services.js";
@@ -84,5 +85,25 @@ export const getUniqueCompanyDataController = async (req, res) => {
     res
       .status(400)
       .json(ErrorResponse("Failed to retrieve company", error.message));
+  }
+};
+
+
+// Get All Users from company Controller
+export const getAllUserFromCompanyController = async (req, res) => {
+  try {
+
+     const { id } = req.params;
+
+    const getAllUsers = await getAllUserFromCompanyServices(id);
+    res
+      .status(200)
+      .json(
+        SuccessRequest("Users retrieved successfully", getAllUsers)
+      );
+  } catch (error) {
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to retrieve users", error.message));
   }
 };

@@ -1,7 +1,11 @@
 import {
   addUserServices,
   addUserToCompanyServices,
+  deactivateUserServices,
   deleteUserServices,
+  getAllCompanyServices,
+  getAllDeactivatedUserServices,
+  getAllDesignationServices,
   getAllUserServices,
   getUniqueUserServices,
   migrateUserServices,
@@ -63,7 +67,7 @@ export const updateUserController = async (req, res) => {
       ...reqData,
       id: id,
     };
-    const resData = await updateUserServices(FinalData);
+    const resData = await deactivateUserServices(FinalData);
 
     res.status(200).json(SuccessRequest("User updated", resData));
   } catch (error) {
@@ -120,13 +124,56 @@ export const migrateUserController = async (req, res) => {
 // Remove User From Company Controller
 export const removeUserFromCompanyController = async (req, res) => {
   try {
-    const { id } = req.params;
+    const reqData = req.body;
 
-    await removeUserFromCompanyServices(id);
+    await removeUserFromCompanyServices(reqData);
     res.status(204).end();
   } catch (error) {
     res
       .status(400)
       .json(ErrorResponse("Failed to remove user from company", error.message));
+  }
+};
+
+
+// Get All Company List
+export const getAllCompanyListController = async (req, res) => {
+  try {
+    const findAllCompanyData = await getAllCompanyServices();
+    res
+      .status(200)
+      .json(SuccessRequest("CompanyList retrieved successfully", findAllCompanyData));
+  } catch (error) {
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to retrive companyList", error.message));
+  }
+};
+
+// Get All Designation List
+export const getAllDesignationListController = async (req, res) => {
+  try {
+    const findAllDesignationData = await getAllDesignationServices();
+    res
+      .status(200)
+      .json(SuccessRequest("DesignationList retrieved successfully", findAllDesignationData));
+  } catch (error) {
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to retrive DesignationList", error.message));
+  }
+};
+
+// Get All Deactivated User Controller
+export const getAllDeactivatedUsersController = async (req, res) => {
+  try {
+    const findAllUsersData = await getAllDeactivatedUserServices();
+    res
+      .status(200)
+      .json(SuccessRequest("Deactivated users retrieved", findAllUsersData));
+  } catch (error) {
+    res
+      .status(400)
+      .json(ErrorResponse("Failed to retrive deactivated users", error.message));
   }
 };

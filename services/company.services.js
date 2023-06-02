@@ -30,16 +30,10 @@ export const updateCompanyServices = async (reqData) => {
     },
   });
 
-  const checkCompanyExist = await prisma.company.findUnique({
-    where: { id: reqData.id },
-  });
-
-  if (!checkCompanyExist) {
-    throw new Error("Company not found.");
-  }
-
-  if (existingCompanyName) {
-    throw new Error("Company already exists.");
+  if (existingCompanyName?.id !== reqData?.id) {
+    if (existingCompanyName) {
+      throw new Error("Company already exists.");
+    }
   }
 
   const resData = prisma.company.update({
@@ -74,9 +68,9 @@ export const deleteCompanyServices = async (reqData) => {
 // Get All Company Services
 export const getAllCompanyDataServices = async () => {
   const allCompany = await prisma.company.findMany({
-    include:{
-      UserInCompany: true
-    }
+    include: {
+      UserInCompany: true,
+    },
   });
 
   if (JSON.stringify(allCompany) === "[]") {
@@ -92,14 +86,14 @@ export const getUniqueCompanyServices = async (reqData) => {
     where: {
       id: reqData,
     },
-    include:{
-      UserInCompany:{
+    include: {
+      UserInCompany: {
         include: {
           user: true,
-          company: true
-        }
-      }
-    }
+          company: true,
+        },
+      },
+    },
   });
 
   if (!uniqueCompany) {
@@ -107,4 +101,28 @@ export const getUniqueCompanyServices = async (reqData) => {
   }
 
   return uniqueCompany;
+};
+
+// Get All User from Company Services
+export const getAllUserFromCompanyServices = async (reqData) => {
+  const allUsers = await prisma.userInCompany.findMany({
+    where: {
+      companyId: reqData,
+    },
+    select: {
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+    },
+  });
+
+  if (JSON.stringify(allUsers) === "[]") {
+    throw new Error("No users found");
+  }
+
+  return allUsers;
 };

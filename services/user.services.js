@@ -4,7 +4,19 @@ const prisma = new PrismaClient();
 
 // Get All User Services
 export const getAllUserServices = async () => {
-  const allUsers = await prisma.user.findMany();
+  const allUsers = await prisma.user.findMany({
+    include: {
+      UserInCompany: {
+        select: {
+          company: true,
+          companyId: true,
+          id: true,
+          user: true,
+          userId: true,
+        },
+      },
+    },
+  });
 
   if (JSON.stringify(allUsers) === "[]") {
     throw new Error("No users found");
@@ -18,6 +30,13 @@ export const getUniqueUserServices = async (reqData) => {
   const uniqueUser = await prisma.user.findUnique({
     where: {
       id: reqData,
+    },
+    include: {
+      UserInCompany: {
+        include: {
+          company: true,
+        },
+      },
     },
   });
 
@@ -54,16 +73,17 @@ export const updateUserServices = async (reqData) => {
     where: { id: reqData.id },
   });
 
-  const emailExist = await prisma.user.findUnique({
-    where: { emailId: reqData.emailId },
-  });
+  if (userData.emailId !== reqData.emailId) {
+    const emailExist = await prisma.user.findUnique({
+      where: { emailId: reqData.emailId },
+    });
+    if (emailExist) {
+      throw new Error("Email already exist.");
+    }
+  }
 
   if (!userData) {
     throw new Error("User not found.");
-  }
-
-  if (emailExist) {
-    throw new Error("Email already exist.");
   }
 
   const resData = prisma.user.update({
@@ -125,8 +145,64 @@ export const migrateUserServices = async (reqData) => {
 
 // Remove User From Company
 export const removeUserFromCompanyServices = async (reqData) => {
+  console.log(reqData);
   const resData = prisma.userInCompany.delete({
-    where: { userId: reqData },
+    where: { userId: reqData.userId },
+  });
+  return await resData;
+};
+
+// Get All CompanyList Services
+export const getAllCompanyServices = async () => {
+  const allCompanyList = await prisma.companyList.findMany({});
+
+  if (JSON.stringify(allCompanyList) === "[]") {
+    throw new Error("No company list found");
+  }
+
+  return allCompanyList;
+};
+
+// Get All DesignationList Services
+export const getAllDesignationServices = async () => {
+  const allDesignationList = await prisma.designationList.findMany({});
+
+  if (JSON.stringify(allDesignationList) === "[]") {
+    throw new Error("No designation list found");
+  }
+
+  return allDesignationList;
+};
+
+// Get All User Services
+export const getAllDeactivatedUserServices = async () => {
+  const allUsers = await prisma.user.findMany({
+    where: {
+      active: false,
+    },
+  });
+
+  if (JSON.stringify(allUsers) === "[]") {
+    throw new Error("No deactivated users found");
+  }
+
+  return allUsers;
+};
+
+
+// Deactivate Unique User
+export const deactivateUserServices = async (reqData) => {
+  const userData = await prisma.user.findUnique({
+    where: { id: reqData.id },
+  });
+
+  if (!userData) {
+    throw new Error("User not found.");
+  }
+
+  const resData = prisma.user.update({
+    where: { id: reqData.id },
+    data: { ...reqData },
   });
   return await resData;
 };

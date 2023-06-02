@@ -28,8 +28,8 @@ model Company {
   id             String          @id @default(uuid())
   companyName    String          @unique
   companyAddress String
-  latitude       String
-  longitude      String
+  latitude       Decimal
+  longitude      Decimal
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   UserInCompany  UserInCompany[]
